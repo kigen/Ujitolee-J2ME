@@ -1,0 +1,1091 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.kigen.changia;
+
+import com.kigen.changia.Model.Project;
+import com.kigen.changia.Model.User;
+import com.kigen.changia.Network.Proxy;
+import com.kigen.changia.Location.*;
+import java.util.Vector;
+import java.util.Enumeration;
+import javax.microedition.midlet.*;
+import javax.microedition.lcdui.*;
+import org.netbeans.microedition.databinding.DataBinder;
+import org.netbeans.microedition.databinding.DataSet;
+
+/**
+ * @author caleb
+ */
+public class MainMIDlet extends MIDlet implements CommandListener {
+
+    private boolean midletPaused = false;
+    private String user_id = "1";
+    private String project_id = "";
+
+    //Loaded Projects
+    Vector my_projects_list ;
+    Vector nearest_projects;
+    Vector all_projects;
+    String active_project_view ="";
+
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Fields ">
+    private Form fmLogin;
+    private TextField txtloginuser;
+    private TextField txtloginpassword;
+    private List lsMain;
+    private Form fmRegister;
+    private TextField txtusername;
+    private TextField txtemail;
+    private TextField txtpassword;
+    private TextField txtphone;
+    private List lsProjects;
+    private Form fmPreview;
+    private StringItem strTitle;
+    private StringItem strUser;
+    private StringItem strStart;
+    private StringItem strend;
+    private StringItem strLocation;
+    private StringItem strMembers;
+    private StringItem strdescription;
+    private StringItem strrequirements;
+    private Form fmNew;
+    private TextField txtTitle;
+    private TextField txtDescription;
+    private DateField dfStart;
+    private DateField dfEnd;
+    private TextField txtMember;
+    private TextField txtRequirements;
+    private TextField txtLocation;
+    private Command okCommand;
+    private Command cmdRegister;
+    private Command backCommand;
+    private Command exitCommand;
+    private Command cmdLogout;
+    private Command cmdView;
+    private Command cmdSignUp;
+    private Command cancelCommand;
+    private Image image4;
+    private Image image;
+    private Image image1;
+    private Image image2;
+    private Image image3;
+    private DataSet dataSet;
+    //</editor-fold>
+
+    /**
+     * The MainMIDlet constructor.
+     */
+    public MainMIDlet() {
+    }
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Methods ">
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: initialize ">
+    /**
+     * Initializes the application.
+     * It is called only once when the MIDlet is started. The method is called before the <code>startMIDlet</code> method.
+     */
+    private void initialize() {
+        // write pre-initialize user code here
+
+        // write post-initialize user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: startMIDlet ">
+    /**
+     * Performs an action assigned to the Mobile Device - MIDlet Started point.
+     */
+    public void startMIDlet() {
+        // write pre-action user code here
+        switchDisplayable(null, getFmLogin());
+        // write post-action user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: resumeMIDlet ">
+    /**
+     * Performs an action assigned to the Mobile Device - MIDlet Resumed point.
+     */
+    public void resumeMIDlet() {
+        // write pre-action user code here
+
+        // write post-action user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: switchDisplayable ">
+    /**
+     * Switches a current displayable in a display. The <code>display</code> instance is taken from <code>getDisplay</code> method. This method is used by all actions in the design for switching displayable.
+     * @param alert the Alert which is temporarily set to the display; if <code>null</code>, then <code>nextDisplayable</code> is set immediately
+     * @param nextDisplayable the Displayable to be set
+     */
+    public void switchDisplayable(Alert alert, Displayable nextDisplayable) {
+        // write pre-switch user code here
+        Display display = getDisplay();
+        if (alert == null) {
+            display.setCurrent(nextDisplayable);
+        } else {
+            display.setCurrent(alert, nextDisplayable);
+        }
+        // write post-switch user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: fmLogin ">
+    /**
+     * Returns an initiliazed instance of fmLogin component.
+     * @return the initialized component instance
+     */
+    public Form getFmLogin() {
+        if (fmLogin == null) {
+            // write pre-init user code here
+            fmLogin = new Form("Login", new Item[] { getTxtloginuser(), getTxtloginpassword() });
+            fmLogin.addCommand(getOkCommand());
+            fmLogin.addCommand(getCmdRegister());
+            fmLogin.addCommand(getExitCommand());
+            fmLogin.setCommandListener(this);
+            // write post-init user code here
+        }
+        return fmLogin;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: commandAction for Displayables ">
+    /**
+     * Called by a system to indicated that a command has been invoked on a particular displayable.
+     * @param command the Command that was invoked
+     * @param displayable the Displayable where the command was invoked
+     */
+    public void commandAction(Command command, Displayable displayable) {
+        // write pre-action user code here
+        if (displayable == fmLogin) {
+            if (command == cmdRegister) {
+                // write pre-action user code here
+
+                switchDisplayable(null, getFmRegister());
+                // write post-action user code here
+            } else if (command == exitCommand) {
+                // write pre-action user code here
+                exitMIDlet();
+                // write post-action user code here
+            } else if (command == okCommand) {
+                // write pre-action user code here
+                //Proxy.login(, null)
+
+                // if (Proxy.login(txtloginuser.getString(), txtloginpassword.getString())) {
+                switchDisplayable(null, getLsMain());
+                //} // write post-action user code here
+            }
+        } else if (displayable == fmNew) {
+            if (command == cancelCommand) {
+                // write pre-action user code here
+                switchDisplayable(null, getLsMain());
+                // write post-action user code here
+            } else if (command == okCommand) {
+                // write pre-action user code here
+                Project pj = new Project();
+                pj.setDescription(txtDescription.getString());
+                pj.setEnd(dfEnd.getDate().toString());
+                pj.setLocation(txtLocation.getString());
+                pj.setMembers(Integer.parseInt( txtMember.getString()));
+                pj.setRequirements(txtRequirements.getString());
+                pj.setStart(dfStart.getDate().toString());
+                pj.setTitle(txtTitle.getString());
+                pj.setUser(user_id);
+
+               if( Proxy.registerProject(pj, user_id))
+               {
+                //Clear input fields.
+
+                   switchDisplayable(null, getLsProjects());
+                // write post-action user code here
+               }else{
+                   //Alert!
+               }
+            }
+        } else if (displayable == fmPreview) {
+            if (command == backCommand) {
+                // write pre-action user code here
+                switchDisplayable(null, getLsProjects());
+                // write post-action user code here
+            } else if (command == cmdSignUp) {
+                // write pre-action user code here
+                if (cmdSignUp.getLabel() != "Quit") {
+
+                    // write post-action user code here
+                    if (Proxy.volunteer(user_id, project_id)) {
+                        cmdSignUp = new Command("Quit", Command.SCREEN, 0);
+                    }
+                } else {
+                    if (Proxy.quitVolunteer(user_id, project_id)) {
+                        cmdSignUp = new Command("Volunteer", Command.SCREEN, 0);
+                    }
+                }
+
+            }
+        } else if (displayable == fmRegister) {
+            if (command == backCommand) {
+                // write pre-action user code here
+                switchDisplayable(null, getFmLogin());
+                // write post-action user code here
+            } else if (command == okCommand) {
+                // write pre-action user code here
+                User user = new User();
+                user.setEmail(txtemail.getString());
+                user.setPhone(txtphone.getString());
+                user.setUsername(txtusername.getString());
+                user.setPassword(txtpassword.getString());
+                int id = Proxy.register(user);
+                if (id != 0) {
+                    user.setId(id);
+                    //TODO: Store data in RMS
+                    switchDisplayable(null, getFmLogin());
+                    // write post-action user code here
+                }
+            }
+        } else if (displayable == lsMain) {
+            if (command == List.SELECT_COMMAND) {
+                // write pre-action user code here
+                lsMainAction();
+                // write post-action user code here
+            } else if (command == cmdLogout) {
+                // write pre-action user code here
+                switchDisplayable(null, getFmLogin());
+                // write post-action user code here
+            } else if (command == exitCommand) {
+                // write pre-action user code here
+                exitMIDlet();
+                // write post-action user code here
+            }
+        } else if (displayable == lsProjects) {
+            if (command == List.SELECT_COMMAND) {
+                // write pre-action user code here
+                lsProjectsAction();
+                // write post-action user code here
+            } else if (command == backCommand) {
+                // write pre-action user code here
+                switchDisplayable(null, getLsMain());
+                // write post-action user code here
+            }
+        }
+        // write post-action user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: lsMain ">
+    /**
+     * Returns an initiliazed instance of lsMain component.
+     * @return the initialized component instance
+     */
+    public List getLsMain() {
+        if (lsMain == null) {
+            // write pre-init user code here
+            lsMain = new List("Changia", Choice.IMPLICIT);
+            lsMain.append("Nearest Projects", getImage1());
+            lsMain.append("Projects", getImage());
+            lsMain.append("Start Project", getImage2());
+            lsMain.append("My Projects", getImage3());
+            lsMain.append("Settings", getImage4());
+            lsMain.addCommand(getExitCommand());
+            lsMain.addCommand(getCmdLogout());
+            lsMain.setCommandListener(this);
+            lsMain.setSelectedFlags(new boolean[] { false, false, false, false, false });
+            // write post-init user code here
+        }
+        return lsMain;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: lsMainAction ">
+    /**
+     * Performs an action assigned to the selected list element in the lsMain component.
+     */
+    public void lsMainAction() {
+        // enter pre-action user code here
+        String __selectedString = getLsMain().getString(getLsMain().getSelectedIndex());
+        if (__selectedString != null) {
+            if (__selectedString.equals("Nearest Projects")) {
+                 //Load Nearest projects.
+
+                switchDisplayable(null, getLsProjects());
+                //Load items to list
+
+            } else if (__selectedString.equals("Projects")) {
+
+
+                switchDisplayable(null, getLsProjects());
+
+                getProjects();
+            } else if (__selectedString.equals("Start Project")) {
+                // write pre-action user code here
+
+                switchDisplayable(null, getFmNew());
+                // write post-action user code here
+                 Retriever ret= new Retriever(this);
+                  ret.start();
+            } else if (__selectedString.equals("My Projects")) {
+                // write pre-action user code here
+                switchDisplayable(null, getLsProjects());
+                // write post-action user code here
+            } else if (__selectedString.equals("Settings")) {
+                // write pre-action user code here
+
+                // write post-action user code here
+            }
+        }
+        // enter post-action user code here
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: fmRegister ">
+    /**
+     * Returns an initiliazed instance of fmRegister component.
+     * @return the initialized component instance
+     */
+    public Form getFmRegister() {
+        if (fmRegister == null) {
+            // write pre-init user code here
+            fmRegister = new Form("Register", new Item[] { getTxtusername(), getTxtemail(), getTxtphone(), getTxtpassword() });
+            fmRegister.addCommand(getOkCommand());
+            fmRegister.addCommand(getBackCommand());
+            fmRegister.setCommandListener(this);
+            // write post-init user code here
+        }
+        return fmRegister;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: okCommand ">
+    /**
+     * Returns an initiliazed instance of okCommand component.
+     * @return the initialized component instance
+     */
+    public Command getOkCommand() {
+        if (okCommand == null) {
+            // write pre-init user code here
+            okCommand = new Command("Ok", Command.OK, 0);
+            // write post-init user code here
+        }
+        return okCommand;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: cmdRegister ">
+    /**
+     * Returns an initiliazed instance of cmdRegister component.
+     * @return the initialized component instance
+     */
+    public Command getCmdRegister() {
+        if (cmdRegister == null) {
+            // write pre-init user code here
+            cmdRegister = new Command("Register", Command.SCREEN, 0);
+            // write post-init user code here
+        }
+        return cmdRegister;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: backCommand ">
+    /**
+     * Returns an initiliazed instance of backCommand component.
+     * @return the initialized component instance
+     */
+    public Command getBackCommand() {
+        if (backCommand == null) {
+            // write pre-init user code here
+            backCommand = new Command("Back", Command.BACK, 0);
+            // write post-init user code here
+        }
+        return backCommand;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: exitCommand ">
+    /**
+     * Returns an initiliazed instance of exitCommand component.
+     * @return the initialized component instance
+     */
+    public Command getExitCommand() {
+        if (exitCommand == null) {
+            // write pre-init user code here
+            exitCommand = new Command("Exit", Command.EXIT, 0);
+            // write post-init user code here
+        }
+        return exitCommand;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: cmdLogout ">
+    /**
+     * Returns an initiliazed instance of cmdLogout component.
+     * @return the initialized component instance
+     */
+    public Command getCmdLogout() {
+        if (cmdLogout == null) {
+            // write pre-init user code here
+            cmdLogout = new Command("Logout", Command.SCREEN, 0);
+            // write post-init user code here
+        }
+        return cmdLogout;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: lsProjects ">
+    /**
+     * Returns an initiliazed instance of lsProjects component.
+     * @return the initialized component instance
+     */
+    public List getLsProjects() {
+        if (lsProjects == null) {
+            // write pre-init user code here
+            lsProjects = new List("Projects", Choice.IMPLICIT);
+            lsProjects.addCommand(getBackCommand());
+            lsProjects.setCommandListener(this);
+            // write post-init user code here
+
+        }
+        return lsProjects;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: lsProjectsAction ">
+    /**
+     * Performs an action assigned to the selected list element in the lsProjects component.
+     */
+    public void lsProjectsAction() {
+        // enter pre-action user code here
+        String __selectedString = getLsProjects().getString(getLsProjects().getSelectedIndex());
+        // enter post-action user code here
+        switchDisplayable(null, getFmPreview());
+        Project pj = (Project)all_projects.elementAt(getLsProjects().getSelectedIndex());
+        getStrTitle().setText(pj.getTitle());
+        getStrdescription().setText(pj.getDescription());
+        getStrLocation().setText(pj.getLocation());
+        getStrMembers().setText(pj.getMembers() + "");
+        getStrrequirements().setText(pj.getRequirements());
+        getStrStart().setText(pj.getStart());
+        getStrend().setText(pj.getEnd());
+        getStrUser().setText(pj.getUser());
+        if (pj.isVolunteer()){
+
+           cmdSignUp = new Command("Quit", Command.SCREEN, 0);
+
+        }
+        project_id =pj.getId()+"";
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: fmNew ">
+    /**
+     * Returns an initiliazed instance of fmNew component.
+     * @return the initialized component instance
+     */
+    public Form getFmNew() {
+        if (fmNew == null) {
+            // write pre-init user code here
+            fmNew = new Form("New Project", new Item[] { getTxtTitle(), getTxtDescription(), getTxtRequirements(), getTxtMember(), getTxtLocation(), getDfStart(), getDfEnd() });
+            fmNew.addCommand(getOkCommand());
+            fmNew.addCommand(getCancelCommand());
+            fmNew.setCommandListener(this);
+            // write post-init user code here
+        }
+        return fmNew;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: fmPreview ">
+    /**
+     * Returns an initiliazed instance of fmPreview component.
+     * @return the initialized component instance
+     */
+    public Form getFmPreview() {
+        if (fmPreview == null) {
+            // write pre-init user code here
+            fmPreview = new Form("Project Preview", new Item[] { getStrTitle(), getStrdescription(), getStrrequirements(), getStrLocation(), getStrMembers(), getStrStart(), getStrend(), getStrUser() });
+            fmPreview.addCommand(getBackCommand());
+            fmPreview.addCommand(getCmdSignUp());
+            fmPreview.setCommandListener(this);
+            // write post-init user code here
+        }
+        return fmPreview;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: cmdView ">
+    /**
+     * Returns an initiliazed instance of cmdView component.
+     * @return the initialized component instance
+     */
+    public Command getCmdView() {
+        if (cmdView == null) {
+            // write pre-init user code here
+            cmdView = new Command("View", Command.ITEM, 0);
+            // write post-init user code here
+        }
+        return cmdView;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: cmdSignUp ">
+    /**
+     * Returns an initiliazed instance of cmdSignUp component.
+     * @return the initialized component instance
+     */
+    public Command getCmdSignUp() {
+        if (cmdSignUp == null) {
+            // write pre-init user code here
+            cmdSignUp = new Command("Volunteer", Command.SCREEN, 0);
+            // write post-init user code here
+        }
+        return cmdSignUp;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: cancelCommand ">
+    /**
+     * Returns an initiliazed instance of cancelCommand component.
+     * @return the initialized component instance
+     */
+    public Command getCancelCommand() {
+        if (cancelCommand == null) {
+            // write pre-init user code here
+            cancelCommand = new Command("Cancel", Command.CANCEL, 0);
+            // write post-init user code here
+        }
+        return cancelCommand;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: dataSet ">
+    /**
+     * Returns an initiliazed instance of dataSet component.
+     * @return the initialized component instance
+     */
+    public DataSet getDataSet() {
+        if (dataSet == null) {
+            // write pre-init user code here
+            dataSet = new DataSet_();
+            // write post-init user code here
+        }
+        return dataSet;
+    }
+    private class DataSet_ implements DataSet {
+        // declaration field
+
+        public Class getType(String name) throws IllegalStateException {
+
+            throw new IllegalStateException("Not implemented yet.");
+        }
+
+        public Object getValue(String name) throws IllegalStateException {
+
+            throw new IllegalStateException("Not implemented yet.");
+        }
+
+        public void setValue(String name, Object value) throws IllegalStateException {
+            //TODO
+            DataBinder.fireDataSetChanged(this, name);
+        }
+
+        public void setAsString(String name, String stringValue) throws IllegalStateException {
+            //TODO
+            DataBinder.fireDataSetChanged(this, name);
+        }
+
+        public boolean isReadOnly(String readOnly) throws IllegalStateException {
+
+            throw new IllegalStateException("Not implemented yet.");
+        }
+    };
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtloginuser ">
+    /**
+     * Returns an initiliazed instance of txtloginuser component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtloginuser() {
+        if (txtloginuser == null) {
+            // write pre-init user code here
+            txtloginuser = new TextField("Username", null, 32, TextField.ANY);
+            // write post-init user code here
+        }
+        return txtloginuser;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtloginpassword ">
+    /**
+     * Returns an initiliazed instance of txtloginpassword component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtloginpassword() {
+        if (txtloginpassword == null) {
+            // write pre-init user code here
+            txtloginpassword = new TextField("Password", null, 32, TextField.ANY);
+            // write post-init user code here
+        }
+        return txtloginpassword;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: image ">
+    /**
+     * Returns an initiliazed instance of image component.
+     * @return the initialized component instance
+     */
+    public Image getImage() {
+        if (image == null) {
+            // write pre-init user code here
+            try {
+                image = Image.createImage("/magnet.png");
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+            // write post-init user code here
+        }
+        return image;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: image1 ">
+    /**
+     * Returns an initiliazed instance of image1 component.
+     * @return the initialized component instance
+     */
+    public Image getImage1() {
+        if (image1 == null) {
+            // write pre-init user code here
+            try {
+                image1 = Image.createImage("/map.png");
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+            // write post-init user code here
+        }
+        return image1;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: image2 ">
+    /**
+     * Returns an initiliazed instance of image2 component.
+     * @return the initialized component instance
+     */
+    public Image getImage2() {
+        if (image2 == null) {
+            // write pre-init user code here
+            try {
+                image2 = Image.createImage("/add.png");
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+            // write post-init user code here
+        }
+        return image2;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: image3 ">
+    /**
+     * Returns an initiliazed instance of image3 component.
+     * @return the initialized component instance
+     */
+    public Image getImage3() {
+        if (image3 == null) {
+            // write pre-init user code here
+            try {
+                image3 = Image.createImage("/database.png");
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+            // write post-init user code here
+        }
+        return image3;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: image4 ">
+    /**
+     * Returns an initiliazed instance of image4 component.
+     * @return the initialized component instance
+     */
+    public Image getImage4() {
+        if (image4 == null) {
+            // write pre-init user code here
+            try {
+                image4 = Image.createImage("/tools.png");
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+            // write post-init user code here
+        }
+        return image4;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtusername ">
+    /**
+     * Returns an initiliazed instance of txtusername component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtusername() {
+        if (txtusername == null) {
+            // write pre-init user code here
+            txtusername = new TextField("Name", null, 32, TextField.ANY);
+            // write post-init user code here
+        }
+        return txtusername;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtemail ">
+    /**
+     * Returns an initiliazed instance of txtemail component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtemail() {
+        if (txtemail == null) {
+            // write pre-init user code here
+            txtemail = new TextField("Email", null, 32, TextField.EMAILADDR);
+            // write post-init user code here
+        }
+        return txtemail;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtphone ">
+    /**
+     * Returns an initiliazed instance of txtphone component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtphone() {
+        if (txtphone == null) {
+            // write pre-init user code here
+            txtphone = new TextField("Phone", null, 32, TextField.PHONENUMBER | TextField.NON_PREDICTIVE);
+            // write post-init user code here
+        }
+        return txtphone;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtpassword ">
+    /**
+     * Returns an initiliazed instance of txtpassword component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtpassword() {
+        if (txtpassword == null) {
+            // write pre-init user code here
+            txtpassword = new TextField("Password", null, 32, TextField.ANY | TextField.PASSWORD);
+            txtpassword.setLayout(ImageItem.LAYOUT_DEFAULT);
+            // write post-init user code here
+        }
+        return txtpassword;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtTitle ">
+    /**
+     * Returns an initiliazed instance of txtTitle component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtTitle() {
+        if (txtTitle == null) {
+            // write pre-init user code here
+            txtTitle = new TextField("Title", null, 50, TextField.ANY);
+            // write post-init user code here
+        }
+        return txtTitle;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtDescription ">
+    /**
+     * Returns an initiliazed instance of txtDescription component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtDescription() {
+        if (txtDescription == null) {
+            // write pre-init user code here
+            txtDescription = new TextField("Description", null, 250, TextField.ANY);
+            txtDescription.setPreferredSize(-1, -1);
+            txtDescription.setLayout(ImageItem.LAYOUT_DEFAULT);
+            // write post-init user code here
+        }
+        return txtDescription;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtRequirements ">
+    /**
+     * Returns an initiliazed instance of txtRequirements component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtRequirements() {
+        if (txtRequirements == null) {
+            // write pre-init user code here
+            txtRequirements = new TextField("Requirements", null, 32, TextField.ANY);
+            // write post-init user code here
+        }
+        return txtRequirements;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtMember ">
+    /**
+     * Returns an initiliazed instance of txtMember component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtMember() {
+        if (txtMember == null) {
+            // write pre-init user code here
+            txtMember = new TextField("Members", null, 32, TextField.NUMERIC);
+            // write post-init user code here
+        }
+        return txtMember;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: dfStart ">
+    /**
+     * Returns an initiliazed instance of dfStart component.
+     * @return the initialized component instance
+     */
+    public DateField getDfStart() {
+        if (dfStart == null) {
+            // write pre-init user code here
+            dfStart = new DateField("Start", DateField.DATE_TIME);
+            dfStart.setDate(new java.util.Date(System.currentTimeMillis()));
+            // write post-init user code here
+        }
+        return dfStart;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: dfEnd ">
+    /**
+     * Returns an initiliazed instance of dfEnd component.
+     * @return the initialized component instance
+     */
+    public DateField getDfEnd() {
+        if (dfEnd == null) {
+            // write pre-init user code here
+            dfEnd = new DateField("End", DateField.DATE_TIME);
+            dfEnd.setDate(new java.util.Date(System.currentTimeMillis()));
+            // write post-init user code here
+        }
+        return dfEnd;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strTitle ">
+    /**
+     * Returns an initiliazed instance of strTitle component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrTitle() {
+        if (strTitle == null) {
+            // write pre-init user code here
+            strTitle = new StringItem("Title", null);
+            // write post-init user code here
+        }
+        return strTitle;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strdescription ">
+    /**
+     * Returns an initiliazed instance of strdescription component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrdescription() {
+        if (strdescription == null) {
+            // write pre-init user code here
+            strdescription = new StringItem("Description", null, Item.PLAIN);
+            // write post-init user code here
+        }
+        return strdescription;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strrequirements ">
+    /**
+     * Returns an initiliazed instance of strrequirements component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrrequirements() {
+        if (strrequirements == null) {
+            // write pre-init user code here
+            strrequirements = new StringItem("Requirements", null);
+            // write post-init user code here
+        }
+        return strrequirements;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strLocation ">
+    /**
+     * Returns an initiliazed instance of strLocation component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrLocation() {
+        if (strLocation == null) {
+            // write pre-init user code here
+            strLocation = new StringItem("Location", null);
+            // write post-init user code here
+        }
+        return strLocation;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strMembers ">
+    /**
+     * Returns an initiliazed instance of strMembers component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrMembers() {
+        if (strMembers == null) {
+            // write pre-init user code here
+            strMembers = new StringItem("Members", null);
+            // write post-init user code here
+        }
+        return strMembers;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strStart ">
+    /**
+     * Returns an initiliazed instance of strStart component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrStart() {
+        if (strStart == null) {
+            // write pre-init user code here
+            strStart = new StringItem("Start Time", null);
+            // write post-init user code here
+        }
+        return strStart;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strend ">
+    /**
+     * Returns an initiliazed instance of strend component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrend() {
+        if (strend == null) {
+            // write pre-init user code here
+            strend = new StringItem("End Time", null);
+            // write post-init user code here
+        }
+        return strend;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: strUser ">
+    /**
+     * Returns an initiliazed instance of strUser component.
+     * @return the initialized component instance
+     */
+    public StringItem getStrUser() {
+        if (strUser == null) {
+            // write pre-init user code here
+            strUser = new StringItem("User", null);
+            // write post-init user code here
+        }
+        return strUser;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtLocation ">
+    /**
+     * Returns an initiliazed instance of txtLocation component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtLocation() {
+        if (txtLocation == null) {
+            // write pre-init user code here
+            txtLocation = new TextField("Location", null, 32, TextField.ANY | TextField.UNEDITABLE);
+            // write post-init user code here
+        }
+        return txtLocation;
+    }
+    //</editor-fold>
+
+    /**
+     * Returns a display instance.
+     * @return the display instance.
+     */
+    public Display getDisplay() {
+        return Display.getDisplay(this);
+    }
+
+    /**
+     * Exits MIDlet.
+     */
+    public void exitMIDlet() {
+        switchDisplayable(null, null);
+        destroyApp(true);
+        notifyDestroyed();
+    }
+
+    /**
+     * Called when MIDlet is started.
+     * Checks whether the MIDlet have been already started and initialize/starts or resumes the MIDlet.
+     */
+    public void startApp() {
+        if (midletPaused) {
+            resumeMIDlet();
+        } else {
+            initialize();
+            startMIDlet();
+        }
+        midletPaused = false;
+    }
+
+    /**
+     * Called when MIDlet is paused.
+     */
+    public void pauseApp() {
+        midletPaused = true;
+    }
+
+    /**
+     * Called to signal the MIDlet to terminate.
+     * @param unconditional if true, then the MIDlet has to be unconditionally terminated and all resources has to be released.
+     */
+    public void destroyApp(boolean unconditional) {
+    }
+
+    boolean loaded = false;
+
+    public void getProjects() {
+        if (!loaded) {
+            all_projects = Proxy.getProjects(user_id,"23,3",45);
+            loaded = true;
+             Enumeration enm = all_projects.elements();
+             lsProjects.deleteAll();
+            while(enm.hasMoreElements()){
+                 Project pj = (Project)enm.nextElement();
+                 lsProjects.append(pj.getTitle() , null);
+             }
+             
+        }
+
+    }
+
+    public void displayLocation(String location){
+        if ("failed".equals(location)){
+            txtLocation.setString("0,0");
+        }else{
+            txtLocation.setString(location);
+        }
+    }
+}
